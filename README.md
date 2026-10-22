@@ -1,6 +1,14 @@
 # PawSafe - Lost-Pet Collar Tag
 
-A tiny static page plus two QR codes for your pet's collar tag. No frameworks, no build tools.
+A tiny static site for a pet QR collar tag. No frameworks, no build tools.
+Scan the tag, see the pet's profile, call the owner.
+
+## Pages
+
+| Page | Purpose |
+| --- | --- |
+| `index.html` | Quick "I'm lost" page: one big call button + WhatsApp + Viber |
+| `pet.html` | Full pet profile with **Pet Information** and **Vet Details** tabs |
 
 ## How to use
 
@@ -10,8 +18,8 @@ A tiny static page plus two QR codes for your pet's collar tag. No frameworks, n
    pip install -r requirements.txt
    ```
 
-2. Edit `config.json` with your pet's details. Never put a home address in there - the
-   tag should only route finders to a phone call.
+2. Edit `config.json` with your pet's details. Never put a home address in there -
+   only a general location like "Quezon City, Philippines".
 
 3. Build everything:
 
@@ -19,24 +27,77 @@ A tiny static page plus two QR codes for your pet's collar tag. No frameworks, n
    python build.py
    ```
 
-4. Preview `index.html` in a browser (resize to a phone width, and try your OS dark mode).
+   This regenerates `index.html`, `pets.js` (the profile data), and the QR images.
+   `pet.html`, `pet.css` and `pet.js` are hand-written - edit those directly if you
+   want to change the profile page's design or behaviour.
 
-5. Push the folder to GitHub and enable Pages (Settings > Pages > Deploy from branch > main).
-   Update `site_url` in `config.json` to your real Pages URL, then run `python build.py` again
-   so `qr_web.png` points at the live page.
+4. Preview locally:
 
-6. Print `qr_offline.png` (or the SVG) at **2.5 cm or larger**, keeping the white border
+   ```
+   python -m http.server 8000
+   ```
+
+   then open http://127.0.0.1:8000/index.html and
+   http://127.0.0.1:8000/pet.html?pet=PET-00124
+
+5. Push the folder to GitHub and enable Pages (Settings > Pages > Deploy from branch >
+   main). The site goes live at `https://<username>.github.io/PawSafe/` - keep that
+   value in `site_url` in `config.json`, then run `python build.py` again so the QR
+   codes point at the real URLs.
+
+6. Print `qr_pet.png` (or the SVG) at **2.5 cm or larger**, keeping the white border
    intact. Laminate it or use a weatherproof sticker before attaching it to the collar.
 
-7. Test: scan `qr_offline.png` with your phone in **airplane mode**. It must open the saved
-   contact details with no internet. Then scan `qr_web.png` online to confirm the page link.
+7. Test: scan `qr_offline.png` with your phone in **airplane mode** - it must open the
+   saved contact with no internet. Then scan `qr_pet.png` online to confirm the profile
+   page opens.
+
+## QR codes
+
+| File | Points to | Works offline? |
+| --- | --- | --- |
+| `qr_offline.png` / `.svg` | A vCard saved on the phone (name, phone, notes) | Yes |
+| `qr_web.png` / `.svg` | `site_url` - the quick contact page | No |
+| `qr_pet.png` / `.svg` | `site_url` + `pet.html?pet=<PET-ID>` - the full profile | No |
+
+Each pet gets its own profile URL from its unique `pet_id` in `config.json`:
+
+```
+https://fmasijr.github.io/PawSafe/pet.html?pet=PET-00124
+```
+
+So each pet's collar tag QR must encode that pet's own URL - `build.py` does this
+automatically for the pet in `config.json`. If you later host several pets, give each
+one a unique `pet_id` and generate a QR per pet (on a server with page routing you
+could use prettier URLs like `/pet/PET-00124`; on GitHub Pages the query-string form
+above is what works without a backend).
+
+## Privacy
+
+- Only public-safe information is shown: general location, never a full home address.
+- Veterinary records are read-only on the public profile.
+- All profile data currently comes from `config.json` and is clearly labelled as
+  unverified sample data.
+
+## Features that need a backend before production
+
+- **"I Found This Pet" form delivery** - right now the form only validates and shows a
+  confirmation; nothing is sent or stored. A backend (or a form/email/SMS service) is
+  needed to actually notify the owner.
+- **Multiple pets / owner dashboard** - `pets.js` is a generated static file; a
+  database is needed to manage many pets without editing files.
+- **Real notifications** (email, SMS, push) when someone reports a found pet.
+- **Photo uploads** for owners.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `config.json` | All details in one place |
-| `build.py` | Generates everything below |
-| `index.html` | Mobile page with call / WhatsApp / Viber buttons |
-| `qr_offline.png` / `.svg` | vCard QR, works offline |
-| `qr_web.png` / `.svg` | QR to the online page |
+| `config.json` | All pet details in one place |
+| `build.py` | Generates `index.html`, `pets.js` and the QR images |
+| `pet.html` / `pet.css` / `pet.js` | Pet profile website (hand-written) |
+| `pets.js` | Generated profile data - edit `config.json` instead |
+| `index.html` | Generated quick contact page |
+| `qr_offline.*` | vCard QR, works offline |
+| `qr_web.*` | QR to the quick contact page |
+| `qr_pet.*` | QR to the pet profile page |

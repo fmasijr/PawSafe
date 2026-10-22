@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pet profile - PawSafe</title>
+<meta name="description" content="Found a lost pet? This page has the owner's contact details.">
+<link rel="stylesheet" href="pet.css">
+</head>
+<body>
+<main class="page">
+
+  <!-- Loading state (shown for a moment while the page reads pets.js) -->
+  <div class="card center" id="loading-state">
+    <p class="spinner" aria-hidden="true">&#8987;</p>
+    <p class="muted">Loading pet profile&hellip;</p>
+  </div>
+
+  <!-- Empty / not-found state -->
+  <div class="card center" id="not-found-state" hidden>
+    <p class="big-icon" aria-hidden="true">&#128269;</p>
+    <h1>Pet profile not found</h1>
+    <p class="muted" id="not-found-detail"></p>
+    <p class="muted">Please ask the person with the pet to check the tag,
+      or open the tag's offline QR code for the owner's phone number.</p>
+    <a class="btn btn-primary" href="index.html">Go to the quick contact page</a>
+  </div>
+
+  <!-- Profile (filled in by pet.js) -->
+  <div id="profile" hidden>
+
+    <header class="card profile-header">
+      <p class="sample-banner" id="sample-banner" hidden>
+        &#9888;&#65039; Sample demo profile &mdash; information has not been verified.
+      </p>
+      <div class="photo" id="pet-photo"></div>
+      <h1 id="pet-name"></h1>
+      <div class="meta">
+        <span class="chip" id="pet-id"></span>
+        <span class="badge" id="pet-badge" hidden></span>
+      </div>
+      <p class="location" id="pet-location" hidden></p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Profile sections">
+      <button type="button" class="tab" role="tab" id="tab-info"
+              aria-controls="panel-info" aria-selected="true" tabindex="0">
+        Pet Information
+      </button>
+      <button type="button" class="tab" role="tab" id="tab-vet"
+              aria-controls="panel-vet" aria-selected="false" tabindex="-1">
+        Vet Details
+      </button>
+    </div>
+
+    <!-- Tab 1: Pet Information -->
+    <section role="tabpanel" id="panel-info" aria-labelledby="tab-info" tabindex="0">
+      <div class="card">
+        <h2>About this pet</h2>
+        <dl class="info-list" id="info-list"></dl>
+        <p class="notice" id="owner-missing" hidden>
+          &#9888;&#65039; This pet has no owner contact on file. Please bring it
+          to the nearest veterinary clinic so the owner can be reached.
+        </p>
+      </div>
+
+      <div class="card actions">
+        <a class="btn btn-primary" id="call-owner" href="#" hidden>&#9742;&#65039; Call Owner</a>
+        <button type="button" class="btn" id="copy-contact">&#128203; Copy Contact Information</button>
+        <button type="button" class="btn btn-warn" id="found-btn" aria-expanded="false"
+                aria-controls="found-card">&#128062; I Found This Pet</button>
+        <a class="btn btn-ghost" id="download-qr" href="qr_pet.png" download hidden>
+          &#11015;&#65039; Download this profile's QR code
+        </a>
+      </div>
+
+      <!-- "I Found This Pet" form -->
+      <div class="card" id="found-card" hidden>
+        <h2>I found this pet</h2>
+        <p class="muted">Tell the owner you have their pet. Fields marked
+          <span class="req">*</span> are required.</p>
+        <form id="found-form" novalidate>
+          <div class="field">
+            <label for="finder-name">Your name <span class="req">*</span></label>
+            <input type="text" id="finder-name" name="finder-name"
+                   autocomplete="name" aria-describedby="finder-name-error">
+            <p class="field-error" id="finder-name-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="finder-phone">Your contact number <span class="req">*</span></label>
+            <input type="tel" id="finder-phone" name="finder-phone"
+                   autocomplete="tel" placeholder="+639171234567"
+                   aria-describedby="finder-phone-error">
+            <p class="field-error" id="finder-phone-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="finder-message">Message for the owner</label>
+            <textarea id="finder-message" name="finder-message" rows="3"
+                      placeholder="Example: Buddy is safe with me, I am at the barangay hall."></textarea>
+          </div>
+          <p class="form-note">
+            &#128274; This demonstration form does <strong>not</strong> send a real
+            message or notification &mdash; there is no backend yet. Calling the owner
+            is the only guaranteed way to reach them.
+          </p>
+          <button type="submit" class="btn btn-primary">Submit report</button>
+        </form>
+        <div id="found-result" hidden aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Vet Details -->
+    <section role="tabpanel" id="panel-vet" aria-labelledby="tab-vet" tabindex="0" hidden>
+      <div class="card">
+        <p class="sample-banner" id="vet-sample-banner" hidden>
+          &#9888;&#65039; Sample veterinary information &mdash; not verified medical records.
+          Always confirm with the clinic.
+        </p>
+        <h2>Veterinary details</h2>
+        <dl class="info-list" id="vet-list"></dl>
+        <p class="notice" id="vet-missing" hidden>
+          &#9888;&#65039; No veterinary contact is listed for this pet.
+        </p>
+      </div>
+
+      <div class="card actions">
+        <a class="btn btn-primary" id="call-vet" href="#" hidden>&#9742;&#65039; Call Veterinary Clinic</a>
+        <button type="button" class="btn" id="copy-vet">&#128203; Copy Vet Details</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Small toast for copy feedback -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+</main>
+<script src="pets.js"></script>
+<script src="pet.js"></script>
+</body>
+</html>

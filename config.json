@@ -1,9 +1,32 @@
 {
+  "pet_id": "PET-00124",
   "pet_name": "Buddy",
   "owner_name": "Your Name",
   "phone": "+639171234567",
   "medical": "Needs daily medication",
   "microchip": "000000000000000",
   "notes": "Friendly but shy.",
-  "site_url": "https://fmasijr.github.io/PawSafe/"
+  "site_url": "https://fmasijr.github.io/PawSafe/",
+  "photo": "",
+  "badge": "Friendly Pet",
+  "location": "Quezon City, Philippines",
+  "species": "Dog",
+  "breed": "Golden Retriever",
+  "age": "3 years",
+  "sex": "Male",
+  "color": "Golden coat with a white patch on the chest",
+  "allergies": "Chicken-based food",
+  "vaccination": "Fully vaccinated - anti-rabies booster given May 2026",
+  "vet": {
+    "name": "Dr. Maria Santos",
+    "clinic": "PawCare Animal Clinic",
+    "phone": "+639179998888",
+    "address": "Quezon Avenue area, Quezon City (general area only)",
+    "last_vaccination": "May 12, 2026",
+    "next_checkup": "November 12, 2026",
+    "medical_history": "Mild hip dysplasia, managed with daily supplements",
+    "medications": "Joint supplement, one tablet every morning",
+    "previous_treatments": "Deworming (Jan 2026), dental scaling (Mar 2026)",
+    "notes": "Calm at the clinic; bring a muzzle only if extremely stressed"
+  }
 }
