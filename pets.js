@@ -3,7 +3,7 @@ window.PAWSAFE_PETS = {
   "PET-00124": {
     "pet_id": "PET-00124",
     "pet_name": "Buddy",
-    "photo": null,
+    "photo": "pet.jpg",
     "badge": "Friendly Pet",
     "location": "Quezon City, Philippines",
     "species": "Dog",
