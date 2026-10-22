@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buddy - if found, please contact my owner</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --text: #1c1e21;
+    --muted: #5b6167;
+    --accent: #1a7f4b;
+    --accent-text: #ffffff;
+    --border: #e2e5e9;
+    --whatsapp: #25d366;
+    --viber: #7360f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --card: #1e2126;
+      --text: #f1f3f5;
+      --muted: #a9b0b8;
+      --accent: #2ea86a;
+      --accent-text: #ffffff;
+      --border: #30343b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .photo {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    line-height: 1;
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  h1 {
+    margin: 0 0 4px;
+    font-size: 32px;
+    text-align: center;
+  }
+  .tagline {
+    margin: 0 0 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  a.button {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-text);
+  }
+  a.call { background: var(--accent); }
+  a.whatsapp { background: var(--whatsapp); color: #07321a; }
+  a.viber { background: var(--viber); }
+  h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+  }
+  dl {
+    margin: 0;
+  }
+  dt {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  dt:first-child { margin-top: 0; }
+  dd {
+    margin: 2px 0 0;
+    font-size: 17px;
+    word-break: break-word;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 0 0 16px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="photo" role="img" aria-label="Pet photo placeholder">🐾</div>
+    <h1>Buddy</h1>
+    <p class="tagline">I'm lost, please call my owner!</p>
+    <div class="actions">
+      <a class="button call" href="tel:639171234567">Call Your Name</a>
+      <a class="button whatsapp" href="https://wa.me/639171234567">WhatsApp</a>
+      <a class="button viber" href="viber://chat?number=%2B639171234567">Viber</a>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Good to know</h2>
+    <dl>
+    <dd>Your Name</dd>
+    <dd>Needs daily medication</dd>
+    <dd>000000000000000</dd>
+    <dd>Friendly but shy.</dd>
+    </dl>
+  </div>
+  <footer>Scan the tag's offline QR for full details. No internet needed.</footer>
+</main>
+</body>
+</html>
