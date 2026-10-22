@@ -12,7 +12,6 @@
     notFound: document.getElementById("not-found-state"),
     notFoundDetail: document.getElementById("not-found-detail"),
     profile: document.getElementById("profile"),
-    sampleBanner: document.getElementById("sample-banner"),
     photo: document.getElementById("pet-photo"),
     name: document.getElementById("pet-name"),
     id: document.getElementById("pet-id"),
@@ -160,7 +159,6 @@
     document.title = pet.pet_name + " - PawSafe pet profile";
 
     if (pet.is_sample) {
-      show(els.sampleBanner);
       show(els.vetSampleBanner);
     }
 
