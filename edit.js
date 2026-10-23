@@ -82,7 +82,14 @@
     resetBtn: document.getElementById("reset-btn"),
     saveError: document.getElementById("save-error"),
     saveOk: document.getElementById("save-ok"),
-    jsonPreview: document.getElementById("json-preview")
+    jsonPreview: document.getElementById("json-preview"),
+    ghOwner: document.getElementById("gh-owner"),
+    ghRepo: document.getElementById("gh-repo"),
+    ghToken: document.getElementById("gh-token"),
+    ghRemember: document.getElementById("gh-remember"),
+    ghTest: document.getElementById("gh-test"),
+    ghSave: document.getElementById("gh-save"),
+    ghStatus: document.getElementById("gh-status")
   };
 
   var liveConfig = null; // as loaded from config.json
@@ -316,6 +323,173 @@
     start(true);
   }
 
+  /* ---------- GitHub API (save without downloading) ---------- */
+
+  var GH_KEY = "pawsafe-github-v1";
+
+  function loadGhPrefs() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(GH_KEY) || "{}");
+      els.ghOwner.value = saved.owner || "fmasijr";
+      els.ghRepo.value = saved.repo || "PawSafe";
+      els.ghToken.value = saved.token || "";
+      els.ghRemember.checked = !!saved.token;
+    } catch (err) {
+      els.ghOwner.value = "fmasijr";
+      els.ghRepo.value = "PawSafe";
+    }
+  }
+
+  function saveGhPrefs() {
+    var payload = {
+      owner: els.ghOwner.value.trim(),
+      repo: els.ghRepo.value.trim(),
+      token: els.ghRemember.checked ? els.ghToken.value.trim() : ""
+    };
+    try {
+      localStorage.setItem(GH_KEY, JSON.stringify(payload));
+    } catch (err) { /* storage blocked - not critical */ }
+  }
+
+  function ghStatus(message, kind) {
+    els.ghStatus.className = "result-box " + kind;
+    els.ghStatus.textContent = message;
+    show(els.ghStatus);
+  }
+
+  function ghRequest(url, options) {
+    var headers = Object.assign(
+      {
+        "Authorization": "Bearer " + els.ghToken.value.trim(),
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      (options && options.headers) || {}
+    );
+    return fetch(url, Object.assign({}, options, { headers: headers })).then(
+      function (response) {
+        return response
+          .json()
+          .catch(function () { return {}; })
+          .then(function (body) {
+            if (!response.ok) {
+              var err = new Error(body.message || ("HTTP " + response.status));
+              err.status = response.status;
+              throw err;
+            }
+            return body;
+          });
+      }
+    );
+  }
+
+  function ghExplain(error) {
+    if (error.status === 401) {
+      return "GitHub rejected the token (401). Check that it was copied in full and has not been revoked.";
+    }
+    if (error.status === 403) {
+      return "GitHub refused the request (403). The token needs Contents: Read and write for this repository.";
+    }
+    if (error.status === 404) {
+      return "Repository not found (404). Check the owner and name, and make sure the token can see this repository.";
+    }
+    if (error.status === 409) {
+      return "The file changed while saving (409). Please try again.";
+    }
+    return "GitHub error: " + error.message;
+  }
+
+  function ghRepoUrl() {
+    return "https://api.github.com/repos/" +
+      encodeURIComponent(els.ghOwner.value.trim()) + "/" +
+      encodeURIComponent(els.ghRepo.value.trim());
+  }
+
+  function ghInputsPresent() {
+    if (!els.ghOwner.value.trim() || !els.ghRepo.value.trim()) {
+      ghStatus("Please fill in the repository owner and name.", "error");
+      return false;
+    }
+    if (!els.ghToken.value.trim()) {
+      ghStatus("Please paste a personal access token (see the setup steps below).", "error");
+      return false;
+    }
+    return true;
+  }
+
+  function testConnection() {
+    if (!ghInputsPresent()) { return; }
+    els.ghTest.disabled = true;
+    ghStatus("Checking the token\u2026", "ok");
+    ghRequest("https://api.github.com/user")
+      .then(function (user) {
+        ghStatus(
+          "\u2705 Connected as " + (user.login || "unknown user") +
+          ". The token works - you can save now.",
+          "ok"
+        );
+      })
+      .catch(function (error) { ghStatus(ghExplain(error), "error"); })
+      .then(function () { els.ghTest.disabled = false; });
+  }
+
+  function saveToGitHub() {
+    var problems = validate();
+    if (problems.length) {
+      els.saveError.textContent = "Please fix the highlighted fields first.";
+      show(els.saveError);
+      return;
+    }
+    if (!ghInputsPresent()) { return; }
+
+    saveGhPrefs();
+    els.ghSave.disabled = true;
+    ghStatus("Saving to GitHub\u2026", "ok");
+
+    var apiUrl = ghRepoUrl() + "/contents/config.json";
+    var commitMessage = "Update config via owner editor";
+    var content = base64Utf8(configJson());
+
+    // Fetch the current file first: updating an existing file needs its blob sha.
+    ghRequest(apiUrl)
+      .then(
+        function (file) { return file.sha || null; },
+        function (error) {
+          if (error.status === 404) { return null; } // file not there yet - create it
+          throw error;
+        }
+      )
+      .then(function (sha) {
+        var body = { message: commitMessage, content: content };
+        if (sha) { body.sha = sha; }
+        return ghRequest(apiUrl, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+      })
+      .then(function (result) {
+        var url = result.commit && result.commit.html_url;
+        ghStatus(
+          "\u2705 Saved to GitHub!" + (url ? " Commit: " + url : "") +
+          " The profile page updates in about a minute. The quick page and the QR " +
+          "images still need a local 'python build.py' run if the site URL or photo changed.",
+          "ok"
+        );
+        clearDraft(); // the change is committed - the local draft is obsolete
+        hide(els.draftBanner);
+      })
+      .catch(function (error) { ghStatus(ghExplain(error), "error"); })
+      .then(function () { els.ghSave.disabled = false; });
+  }
+
+  function base64Utf8(str) {
+    var bytes = new TextEncoder().encode(str);
+    var binary = "";
+    bytes.forEach(function (b) { binary += String.fromCharCode(b); });
+    return btoa(binary);
+  }
+
   /* ---------- boot ---------- */
 
   function applyConfig(config) {
@@ -348,6 +522,12 @@
   els.downloadBtn.addEventListener("click", downloadConfig);
   els.copyBtn.addEventListener("click", copyConfig);
   els.resetBtn.addEventListener("click", resetToLive);
+  els.ghTest.addEventListener("click", testConnection);
+  els.ghSave.addEventListener("click", saveToGitHub);
+
+  [els.ghOwner, els.ghRepo, els.ghToken, els.ghRemember].forEach(function (el) {
+    el.addEventListener("change", saveGhPrefs);
+  });
 
   els.restoreDraft.addEventListener("click", function () {
     var draft = readDraft();
@@ -361,4 +541,5 @@
   });
 
   start(false);
+  loadGhPrefs();
 })();

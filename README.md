@@ -59,11 +59,21 @@ There are two ways to change the details. Both edit the same `config.json`.
 **A. Owner editor page (no coding).** Open `edit.html` in a browser (serve the folder
 with `python -m http.server 8000` and visit `http://127.0.0.1:8000/edit.html`, or open
 it on the live site). It shows every field in a form. As you type, a draft is saved in
-that browser only (localStorage) so you can close and come back. When you are happy,
-click **Download config.json**, then upload that file to your GitHub repo (*Add file >
-Upload files > Commit*) or replace it locally and run `python build.py`. The profile
-page reads `config.json` directly, so it updates about a minute after you commit -
-no rebuild required for the profile text.
+that browser only (localStorage) so you can close and come back. Three ways to save:
+
+1. **Save to GitHub (no downloads).** Connect the editor once with a *fine-grained
+   personal access token* scoped to this repo with **Contents: Read and write**
+   (the editor shows the exact steps). Click **Save to GitHub** and the new
+   `config.json` is committed straight from your browser - the profile page updates
+   in about a minute. Only tick "Remember" on a personal, private computer: anyone
+   holding the token can change the repo, and you can revoke it anytime under
+   GitHub > Settings > Developer settings > Personal access tokens.
+2. **Download + upload.** Click **Download config.json**, then upload it on GitHub
+   (*Add file > Upload files > Commit*). No token needed.
+3. **Edit the file directly** (below).
+
+The profile page reads `config.json` directly, so profile-text edits go live from a
+commit alone - no rebuild required.
 
 **B. Edit the file directly.** Open `config.json` in any text editor, change the values,
 save, and commit (or run `python build.py` to also refresh the QR images).

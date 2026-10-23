@@ -29,6 +29,53 @@
     </div>
   </div>
 
+  <!-- GitHub connection: save edits straight to the repository -->
+  <div class="card">
+    <h2 class="section-title"><span class="section-icon">&#128190;</span> Save directly to GitHub</h2>
+    <p class="muted">Connect once with a personal access token, then click
+      <strong>Save to GitHub</strong> to send your edits straight to the repository &mdash;
+      no downloads. The token is kept only in this browser.</p>
+    <div class="section-fields">
+      <div class="field">
+        <label for="gh-owner">Repository owner</label>
+        <input type="text" id="gh-owner" placeholder="fmasijr" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="gh-repo">Repository name</label>
+        <input type="text" id="gh-repo" placeholder="PawSafe" autocomplete="off">
+      </div>
+      <div class="field wide">
+        <label for="gh-token">Personal access token</label>
+        <input type="password" id="gh-token" placeholder="github_pat_..." autocomplete="off">
+      </div>
+    </div>
+    <label class="gh-remember">
+      <input type="checkbox" id="gh-remember">
+      Remember the token in this browser
+    </label>
+    <div class="actions">
+      <button type="button" class="btn" id="gh-test">&#9989; Test connection</button>
+      <button type="button" class="btn btn-primary" id="gh-save">&#128190; Save to GitHub</button>
+    </div>
+    <p class="result-box" id="gh-status" hidden></p>
+    <details class="json-preview">
+      <summary>How to create the token (one-time setup)</summary>
+      <ol class="steps">
+        <li>On GitHub: click your photo &rarr; <em>Settings</em> &rarr;
+          <em>Developer settings</em> &rarr; <em>Personal access tokens</em> &rarr;
+          <em>Fine-grained tokens</em> &rarr; <em>Generate new token</em>.</li>
+        <li>Repository access: <em>Only select repositories</em> &rarr; choose this repo.</li>
+        <li>Permissions &rarr; Repository permissions &rarr; set
+          <strong>Contents</strong> to <em>Read and write</em>. Leave everything else off.</li>
+        <li>Generate it, copy the token, and paste it above.</li>
+      </ol>
+      <p class="notice">Anyone with this token can change your repository. Never paste it
+        on a shared or public computer, and revoke it anytime from that same GitHub page
+        if it ever leaks. This connection can only commit files &mdash; it cannot touch
+        settings, pages, or other repositories.</p>
+    </details>
+  </div>
+
   <!-- the form is built by edit.js from a field schema -->
   <form id="edit-form" novalidate>
     <div id="sections"></div>
@@ -51,11 +98,11 @@
 
     <h3>What to do next</h3>
     <ol class="steps">
-      <li>Click <strong>Download config.json</strong> (the file lands in your Downloads folder).</li>
-      <li><strong>Easiest:</strong> on GitHub, open your PawSafe repo &rarr;
-        <em>Add file &rarr; Upload files</em> &rarr; pick the downloaded
-        <code>config.json</code> &rarr; <em>Commit changes</em>. The profile page
-        (<code>pet.html</code>) updates in about a minute.</li>
+      <li><strong>Easiest:</strong> connect GitHub above and click
+        <strong>Save to GitHub</strong> &mdash; the profile page updates in about a
+        minute, no download needed.</li>
+      <li><strong>Without a token:</strong> click <strong>Download config.json</strong>,
+        then on GitHub use <em>Add file &rarr; Upload files</em> and commit the file.</li>
       <li><strong>Or run it locally:</strong> replace <code>config.json</code> in the
         project folder, then run <code>python build.py</code> and push &mdash; this also
         refreshes the quick page (<code>index.html</code>) and the QR images, which
