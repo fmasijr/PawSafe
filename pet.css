@@ -45,6 +45,9 @@
 
 * { box-sizing: border-box; }
 
+/* author display rules would otherwise override the UA [hidden] style */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {

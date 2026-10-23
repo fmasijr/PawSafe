@@ -52,6 +52,28 @@ Scan the tag, see the pet's profile, call the owner.
    saved contact with no internet. Then scan `qr_pet.png` online to confirm the profile
    page opens.
 
+## Editing the pet information
+
+There are two ways to change the details. Both edit the same `config.json`.
+
+**A. Owner editor page (no coding).** Open `edit.html` in a browser (serve the folder
+with `python -m http.server 8000` and visit `http://127.0.0.1:8000/edit.html`, or open
+it on the live site). It shows every field in a form. As you type, a draft is saved in
+that browser only (localStorage) so you can close and come back. When you are happy,
+click **Download config.json**, then upload that file to your GitHub repo (*Add file >
+Upload files > Commit*) or replace it locally and run `python build.py`. The profile
+page reads `config.json` directly, so it updates about a minute after you commit -
+no rebuild required for the profile text.
+
+**B. Edit the file directly.** Open `config.json` in any text editor, change the values,
+save, and commit (or run `python build.py` to also refresh the QR images).
+
+Notes: the editor is a private tool and is not linked from the public profile - visitors
+cannot change anything through `pet.html`, which is read-only. Drafts never leave your
+browser. The quick page (`index.html`) and the QR PNGs are generated at build time, so
+run `python build.py` and push when you change `site_url`, the pet photo, or anything
+that should appear on the printed tag.
+
 ## QR codes
 
 | File | Points to | Works offline? |

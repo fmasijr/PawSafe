@@ -390,6 +390,18 @@ def main():
     index = build_html(cfg)
 
     profile = pet_profile(cfg)
+
+    # Point the profile's QR download at the file generated below, if any.
+    profile_url = pet_profile_url(cfg)
+    if profile_url:
+        profile["qr_png"] = "qr_pet.png"
+        profile["qr_svg"] = "qr_pet.svg"
+    else:
+        print(
+            "WARNING: site_url is empty or still a placeholder, so qr_pet.png "
+            "was not generated. Set site_url in config.json and run again."
+        )
+
     pets_js = build_pets_js(profile)
 
     card = vcard(cfg)
@@ -409,18 +421,12 @@ def main():
 
     created = [index, pets_js, offline_png, offline_svg, web_png, web_svg]
 
-    profile_url = pet_profile_url(cfg)
     if profile_url:
         profile_png = BASE_DIR / "qr_pet.png"
         profile_svg = BASE_DIR / "qr_pet.svg"
         make_qr(profile_url, profile_png, profile_svg)
         created += [profile_png, profile_svg]
         print(f"Pet profile URL encoded in qr_pet.png: {profile_url}")
-    else:
-        print(
-            "WARNING: site_url is empty or still a placeholder, so qr_pet.png "
-            "was not generated. Set site_url in config.json and run again."
-        )
 
     print("Files created:")
     for path in created:

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner editor - PawSafe</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="pet.css">
+<link rel="stylesheet" href="edit.css">
+</head>
+<body>
+<main class="page">
+
+  <header class="card editor-header">
+    <h1>Owner editor</h1>
+    <p class="muted">Edit Buddy's profile here, then save the new <code>config.json</code>
+      back to the repository. This page is a private tool &mdash; it is not linked from
+      the public profile, and visitors cannot change any information through it.</p>
+    <p class="notice" id="load-error" hidden></p>
+  </header>
+
+  <!-- draft restore offer -->
+  <div class="card draft-banner" id="draft-banner" hidden>
+    <p><strong>Draft found in this browser.</strong> Would you like to continue where
+      you left off?</p>
+    <div class="draft-actions">
+      <button type="button" class="btn btn-primary" id="restore-draft">Restore draft</button>
+      <button type="button" class="btn" id="discard-draft">Discard draft</button>
+    </div>
+  </div>
+
+  <!-- the form is built by edit.js from a field schema -->
+  <form id="edit-form" novalidate>
+    <div id="sections"></div>
+  </form>
+
+  <div class="card">
+    <h2>Save your changes</h2>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="download-btn">&#11015;&#65039; Download config.json</button>
+      <button type="button" class="btn" id="copy-btn">&#128203; Copy JSON</button>
+      <button type="button" class="btn" id="reset-btn">&#8634; Reset to live data</button>
+    </div>
+    <p class="notice" id="save-error" hidden></p>
+    <p class="result-box ok" id="save-ok" hidden></p>
+
+    <details class="json-preview">
+      <summary>Preview the generated config.json</summary>
+      <pre id="json-preview"></pre>
+    </details>
+
+    <h3>What to do next</h3>
+    <ol class="steps">
+      <li>Click <strong>Download config.json</strong> (the file lands in your Downloads folder).</li>
+      <li><strong>Easiest:</strong> on GitHub, open your PawSafe repo &rarr;
+        <em>Add file &rarr; Upload files</em> &rarr; pick the downloaded
+        <code>config.json</code> &rarr; <em>Commit changes</em>. The profile page
+        (<code>pet.html</code>) updates in about a minute.</li>
+      <li><strong>Or run it locally:</strong> replace <code>config.json</code> in the
+        project folder, then run <code>python build.py</code> and push &mdash; this also
+        refreshes the quick page (<code>index.html</code>) and the QR images, which
+        only change during a build.</li>
+    </ol>
+  </div>
+
+  <footer class="editor-footer muted">
+    Drafts are stored only in this browser (localStorage) and are never uploaded
+    anywhere. The public profile stays read-only.
+  </footer>
+
+</main>
+<script src="edit.js"></script>
+</body>
+</html>

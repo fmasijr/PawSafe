@@ -394,34 +394,102 @@
 
   /* ---------- start ---------- */
 
+  /* Build one profile record from config.json (same shape build.py generates).
+     This lets the owner update the site by uploading a new config.json - no
+     rebuild needed. pets.js stays as the offline/file:// fallback. */
+  function recordFromConfig(cfg) {
+    var vet = cfg.vet || {};
+    return {
+      pet_id: cfg.pet_id,
+      pet_name: cfg.pet_name,
+      photo: cfg.photo || "pet.jpg",
+      badge: cfg.badge,
+      location: cfg.location,
+      species: cfg.species,
+      breed: cfg.breed,
+      age: cfg.age,
+      sex: cfg.sex,
+      color: cfg.color,
+      allergies: cfg.allergies,
+      medical: cfg.medical,
+      vaccination: cfg.vaccination,
+      microchip: cfg.microchip,
+      notes: cfg.notes,
+      owner_name: cfg.owner_name,
+      phone: cfg.phone,
+      is_sample: cfg.is_sample !== false,
+      qr_png: cfg.site_url ? "qr_pet.png" : null,
+      qr_svg: cfg.site_url ? "qr_pet.svg" : null,
+      vet: {
+        name: vet.name,
+        clinic: vet.clinic,
+        phone: vet.phone,
+        address: vet.address,
+        last_vaccination: vet.last_vaccination,
+        next_checkup: vet.next_checkup,
+        allergies: vet.allergies || cfg.allergies,
+        medical_history: vet.medical_history,
+        medications: vet.medications,
+        previous_treatments: vet.previous_treatments,
+        notes: vet.notes
+      }
+    };
+  }
+
+  function petsFromConfig(cfg) {
+    if (!cfg || !cfg.pet_id) { return null; }
+    var record = recordFromConfig(cfg);
+    var map = {};
+    map[record.pet_id] = record;
+    return map;
+  }
+
+  function loadPets() {
+    return fetch("config.json", { cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) { throw new Error("HTTP " + response.status); }
+        return response.json();
+      })
+      .then(function (cfg) {
+        return petsFromConfig(cfg) || PETS;
+      })
+      .catch(function () {
+        return PETS;
+      });
+  }
+
   function init() {
     wireTabs();
 
-    var petId = new URLSearchParams(window.location.search).get("pet");
-    var pet = petId ? PETS[petId] : null;
+    loadPets().then(function (pets) {
+      document.body.dataset.source = (pets === PETS) ? "pets-js" : "config-json";
 
-    // Support opening pet.html directly with no ?pet= when only one pet exists.
-    if (!pet && !petId) {
-      var ids = Object.keys(PETS);
-      if (ids.length === 1) { pet = PETS[ids[0]]; }
-    }
+      var petId = new URLSearchParams(window.location.search).get("pet");
+      var pet = petId ? pets[petId] : null;
 
-    if (!pet) {
-      showNotFound(petId || "");
-      return;
-    }
+      // Support opening pet.html directly with no ?pet= when only one pet exists.
+      if (!pet && !petId) {
+        var ids = Object.keys(pets);
+        if (ids.length === 1) { pet = pets[ids[0]]; }
+      }
 
-    renderPet(pet);
+      if (!pet) {
+        showNotFound(petId || "");
+        return;
+      }
 
-    els.foundBtn.addEventListener("click", toggleFoundForm);
-    els.foundForm.addEventListener("submit", handleFoundSubmit);
+      renderPet(pet);
 
-    els.copyContact.addEventListener("click", function () {
-      copyText(buildContactText(currentPet), "Contact information copied.");
-    });
+      els.foundBtn.addEventListener("click", toggleFoundForm);
+      els.foundForm.addEventListener("submit", handleFoundSubmit);
 
-    els.copyVet.addEventListener("click", function () {
-      copyText(buildVetText(currentPet), "Vet details copied.");
+      els.copyContact.addEventListener("click", function () {
+        copyText(buildContactText(currentPet), "Contact information copied.");
+      });
+
+      els.copyVet.addEventListener("click", function () {
+        copyText(buildVetText(currentPet), "Vet details copied.");
+      });
     });
   }
 
