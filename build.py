@@ -344,6 +344,16 @@ def pet_profile_url(cfg):
     return f"{site}pet.html?pet={cfg['pet_id']}"
 
 
+def edit_page_url(cfg):
+    """The URL of the owner editor page, or None if unusable."""
+    site = str(cfg.get("site_url", "")).strip()
+    if not site or "YOUR-USERNAME" in site:
+        return None
+    if not site.endswith("/"):
+        site += "/"
+    return site + "edit.html"
+
+
 def vcard(cfg):
     notes = "; ".join(
         str(cfg.get(key, "")).strip()
@@ -427,6 +437,14 @@ def main():
         make_qr(profile_url, profile_png, profile_svg)
         created += [profile_png, profile_svg]
         print(f"Pet profile URL encoded in qr_pet.png: {profile_url}")
+
+    editor_url = edit_page_url(cfg)
+    if editor_url:
+        editor_png = BASE_DIR / "qr_edit.png"
+        editor_svg = BASE_DIR / "qr_edit.svg"
+        make_qr(editor_url, editor_png, editor_svg)
+        created += [editor_png, editor_svg]
+        print(f"Owner editor URL encoded in qr_edit.png: {editor_url}")
 
     print("Files created:")
     for path in created:

@@ -91,6 +91,11 @@ that should appear on the printed tag.
 | `qr_offline.png` / `.svg` | A vCard saved on the phone (name, phone, notes) | Yes |
 | `qr_web.png` / `.svg` | `site_url` - the quick contact page | No |
 | `qr_pet.png` / `.svg` | `site_url` + `pet.html?pet=<PET-ID>` - the full profile | No |
+| `qr_edit.png` / `.svg` | `site_url` + `edit.html` - the **owner editor** | No |
+
+`qr_edit.png` is for the owner only - it opens the editor page where details can be
+changed. Never attach it to a collar; put `qr_pet.png` there instead. The editor itself
+cannot change anything without your GitHub token.
 
 Each pet gets its own profile URL from its unique `pet_id` in `config.json`:
 
